@@ -1,0 +1,338 @@
+ESPECIFICACIÓN FUNCIONAL Y TÉCNICA
+SISTEMA DE INVENTARIO DE TI + MESA DE SERVICIO (WEB - LARAVEL)
+
+---
+
+1. OBJETIVO
+
+Desarrollar una aplicación web escalable para la gestión de activos de TI, asignación de equipos, control de mantenimiento y gestión de tickets, integrando flujos de aprobación dinámicos y autenticación externa.
+
+---
+
+2. STACK TECNOLÓGICO
+
+Backend:
+
+* Laravel (última versión estable)
+* Arquitectura basada en servicios (Service Layer + Repository Pattern)
+* API RESTful
+
+Frontend:
+
+* Blade + Livewire (o Inertia opcional)
+* TailwindCSS (obligatorio)
+
+Autenticación:
+
+* Integración con Auth0
+* Single Sign-On (SSO)
+* Manejo de sesiones seguro (JWT o sesiones)
+
+Base de datos:
+
+* MySQL (con posibilidad de escalar a PostgreSQL)
+
+Infraestructura (recomendado):
+
+* Docker
+* CI/CD
+* Separación por entornos (dev, qa, prod)
+
+---
+
+3. MÓDULO DE AUTENTICACIÓN Y USUARIOS
+
+* Login mediante Auth0
+* Sin registro manual de contraseñas en el sistema
+* Sincronización de usuarios autenticados
+
+Campos:
+
+* Nombre
+* Email
+* Área / Departamento
+* Puesto
+* Jefe directo (relación jerárquica)
+* Estatus (Activo/Inactivo)
+
+Relaciones:
+
+* Usuario → jefe directo (self reference)
+* Usuario → roles
+
+---
+
+4. ROLES Y PERMISOS
+
+Roles base:
+
+* Administrador
+* Sistemas / TI
+* Jefe de área
+* Recursos Humanos (RH)
+* Usuario estándar
+* Auditor
+
+Permisos:
+
+* CRUD de activos
+* Asignación de activos
+* Creación y gestión de tickets
+* Aprobación de solicitudes
+* Visualización de reportes
+* Administración de flujos
+
+Control:
+
+* Middleware por roles
+* Permisos granulares (RBAC)
+
+---
+
+5. MÓDULO DE ACTIVOS
+
+Funcionalidades:
+
+* Alta, edición y baja lógica de activos
+
+* Clasificación por tipo (laptop, desktop, etc.)
+
+* Registro completo:
+
+  * Serie
+  * Marca / modelo
+  * Código interno
+  * Ubicación
+  * Estado
+  * Garantía
+  * Fecha de compra
+  * Costo
+
+* Carga masiva (CSV/Excel)
+
+* Búsqueda avanzada
+
+---
+
+6. ASIGNACIÓN DE ACTIVOS
+
+* Asignar activos a usuarios
+* Reasignar entre usuarios
+* Liberar activos
+
+Historial:
+
+* Usuario anterior
+* Usuario nuevo
+* Fecha de asignación
+* Fecha de devolución
+* Motivo
+
+Reglas:
+
+* Un activo solo puede tener una asignación activa
+* Trazabilidad obligatoria
+
+---
+
+7. MÓDULO DE MANTENIMIENTO
+
+* Registro de mantenimiento:
+
+  * Tipo (preventivo / correctivo)
+  * Fecha programada
+  * Fecha realizada
+  * Responsable
+  * Costo
+
+* Configuración de mantenimientos periódicos (ej. anual)
+
+* Generación automática de tareas de mantenimiento
+
+* Alertas de vencimiento
+
+---
+
+8. MÓDULO DE TICKETS (MESA DE SERVICIO)
+
+Funcionalidades:
+
+* Creación de tickets:
+
+  * Tipo (incidente, solicitud, mantenimiento)
+  * Prioridad
+  * Descripción
+  * Adjuntos
+
+* Asignación a personal de TI
+
+* Estados:
+
+  * Abierto
+  * En progreso
+  * En espera
+  * Cerrado
+
+* Relación con activos:
+
+  * Ticket ↔ Activo
+
+* Historial de acciones
+
+* Comentarios internos y públicos
+
+---
+
+9. FLUJOS DE APROBACIÓN (MULTI-APROBACIÓN DINÁMICA)
+
+El sistema debe permitir configurar flujos dinámicos de aprobación:
+
+Ejemplo:
+Solicitud de equipo →
+
+1. Aprobación jefe directo
+2. Aprobación dirección
+3. Aprobación RH
+4. Aprobación TI
+
+Características:
+
+* Configuración de flujos por tipo de solicitud
+
+* Número variable de pasos
+
+* Roles o usuarios asignables por paso
+
+* Reglas:
+
+  * Secuencial (orden obligatorio)
+  * Paralelo (opcional)
+
+* Estados:
+
+  * Pendiente
+  * Aprobado
+  * Rechazado
+  * En revisión
+
+* Historial completo de aprobaciones
+
+---
+
+10. MOTOR DE WORKFLOWS (ESCALABILIDAD CLAVE)
+
+* Definición de flujos en base de datos (no hardcodeados)
+
+* Tablas sugeridas:
+
+  * workflows
+  * workflow_steps
+  * workflow_instances
+  * workflow_approvals
+
+* Permitir:
+
+  * Crear/editar flujos desde UI
+  * Reutilizar flujos por tipo de solicitud
+
+---
+
+11. REPORTES
+
+* Activos por usuario
+* Activos por estado
+* Tickets por estado
+* Tickets por área
+* Mantenimientos programados/vencidos
+* Auditoría de asignaciones
+
+Exportación:
+
+* Excel
+* PDF
+
+---
+
+12. ALERTAS Y NOTIFICACIONES
+
+* Email automático:
+
+  * Nuevo ticket
+  * Cambio de estado
+  * Solicitudes pendientes de aprobación
+  * Mantenimiento próximo
+
+* Notificaciones en dashboard
+
+---
+
+13. AUDITORÍA
+
+* Registro de eventos:
+
+  * Usuario
+  * Acción
+  * Entidad afectada
+  * Fecha
+
+* No eliminación física de datos críticos
+
+---
+
+14. MODELO DE DATOS (TABLAS PRINCIPALES)
+
+* users
+* roles
+* permissions
+* assets
+* asset_assignments
+* maintenance_records
+* tickets
+* ticket_comments
+* workflows
+* workflow_steps
+* workflow_instances
+* workflow_approvals
+* notifications
+* audit_logs
+
+---
+
+15. ESCALABILIDAD Y BUENAS PRÁCTICAS
+
+* Uso de colas (queues) para:
+
+  * Envío de correos
+  * Procesos pesados
+
+* Cache (Redis recomendado)
+
+* API desacoplada para futura app móvil
+
+* Versionado de API
+
+* Soft deletes en tablas críticas
+
+---
+
+16. MVP (VERSIÓN INICIAL)
+
+* Autenticación con Auth0
+* Gestión de activos
+* Asignación de equipos
+* Tickets básicos
+* Roles simples
+* Flujo de aprobación básico (jefe directo)
+
+---
+
+17. FASES FUTURAS
+
+* Integración con directorios corporativos
+* Automatización de descubrimiento de equipos
+* Dashboard analítico avanzado
+* Integración con herramientas externas
+
+---
+
+FIN DE ESPECIFICACIÓN

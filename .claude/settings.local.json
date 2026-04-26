@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php artisan *)",
+      "Bash(curl -s -o /dev/null -w \"GET / HTTP=%{http_code}\\\\n\" http://127.0.0.1:8899/)",
+      "Bash(curl -s -o /dev/null -w \"GET /login HTTP=%{http_code}\\\\n\" http://127.0.0.1:8899/login)",
+      "Bash(curl -s -o /dev/null -w \"GET /dashboard HTTP=%{http_code}\\\\n\" http://127.0.0.1:8899/dashboard)",
+      "Bash(kill %1)",
+      "Bash(curl -s -o /dev/null -w \"status=%{http_code}\\\\n\" http://127.0.0.1:8899/login)",
+      "Bash(curl -s -o /dev/null -w \"status=%{http_code} location=%{redirect_url}\\\\n\" http://127.0.0.1:8899/login/google)",
+      "Bash(\"c:/xampp/mysql/bin/mysqld.exe\" --defaults-file=c:/xampp/mysql/bin/my.ini --standalone)",
+      "Bash(c:/xampp/mysql/bin/mysql.exe -u root -e \"SELECT VERSION\\(\\);\")",
+      "Bash(c:/xampp/mysql/bin/mysql.exe -u root -e \"CREATE DATABASE IF NOT EXISTS inventario_ti CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;\")",
+      "Bash(c:/xampp/mysql/bin/mysql.exe -u root -e \"SELECT 1;\")",
+      "Bash(QUEUE_CONNECTION=sync php artisan gpt:send-alerts)"
+    ]
+  }
+}
