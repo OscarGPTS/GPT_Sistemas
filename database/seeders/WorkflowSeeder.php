@@ -50,5 +50,29 @@ class WorkflowSeeder extends Seeder
             'name' => 'Aprobación Jefe Directo',
             'approver_type' => 'manager',
         ]);
+
+        // Project request workflow
+        $projectWf = Workflow::updateOrCreate(
+            ['slug' => 'project-request'],
+            [
+                'name' => 'Solicitud de Proyecto',
+                'target_type' => 'project_request',
+                'description' => 'Flujo de aprobación para solicitudes de proyecto antes de su ejecución.',
+                'is_active' => true,
+                'mode' => 'sequential',
+            ]
+        );
+        $projectWf->steps()->delete();
+        $projectSteps = [
+            ['order' => 1, 'name' => 'Aprobación Jefe de Área', 'approver_type' => 'manager',
+             'instructions' => 'Validar pertinencia del proyecto, alineación con objetivos del área y disponibilidad de recursos del equipo.'],
+            ['order' => 2, 'name' => 'Aprobación Dirección', 'approver_type' => 'role', 'role_id' => $roles['admin'] ?? null,
+             'instructions' => 'Revisar el alcance, presupuesto estimado y prioridad estratégica.'],
+            ['order' => 3, 'name' => 'Validación TI', 'approver_type' => 'role', 'role_id' => $roles['it'] ?? null,
+             'instructions' => 'Verificar requerimientos técnicos y disponibilidad de infraestructura.'],
+        ];
+        foreach ($projectSteps as $s) {
+            $projectWf->steps()->create($s);
+        }
     }
 }

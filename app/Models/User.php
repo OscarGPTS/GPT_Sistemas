@@ -78,6 +78,23 @@ class User extends Authenticatable
         return $this->hasMany(Ticket::class, 'assignee_id');
     }
 
+    public function projectsManaged(): HasMany
+    {
+        return $this->hasMany(Project::class, 'manager_id');
+    }
+
+    public function projects(): BelongsToMany
+    {
+        return $this->belongsToMany(Project::class, 'project_user')
+            ->withPivot('role')
+            ->withTimestamps();
+    }
+
+    public function tasksAssigned(): HasMany
+    {
+        return $this->hasMany(Task::class, 'assignee_id');
+    }
+
     public function hasRole(string|array $name): bool
     {
         $names = is_array($name) ? $name : [$name];

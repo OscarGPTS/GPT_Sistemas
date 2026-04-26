@@ -81,6 +81,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             WorkflowSeeder::class,
             DemoDataSeeder::class,
+            ProjectSeeder::class,
         ]);
     }
 }

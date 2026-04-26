@@ -12,7 +12,8 @@
       "Bash(c:/xampp/mysql/bin/mysql.exe -u root -e \"SELECT VERSION\\(\\);\")",
       "Bash(c:/xampp/mysql/bin/mysql.exe -u root -e \"CREATE DATABASE IF NOT EXISTS inventario_ti CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;\")",
       "Bash(c:/xampp/mysql/bin/mysql.exe -u root -e \"SELECT 1;\")",
-      "Bash(QUEUE_CONNECTION=sync php artisan gpt:send-alerts)"
+      "Bash(QUEUE_CONNECTION=sync php artisan gpt:send-alerts)",
+      "Bash(curl -s -o /dev/null -w \" status=%{http_code}\\\\n\" http://127.0.0.1:8000/login)"
     ]
   }
 }

@@ -81,6 +81,7 @@ class WorkflowEngine
                 $this->audit->log('workflow.rejected', $instance, [], ['by' => $approver->id]);
                 $fresh = $instance->fresh();
                 $this->notifyInitiator($fresh, $approver, $decision, $comment);
+                $this->dispatchSubjectHook($fresh);
                 return $fresh;
             }
 
@@ -110,8 +111,20 @@ class WorkflowEngine
             $this->audit->log('workflow.approved', $instance, [], ['by' => $approver->id]);
             $fresh = $instance->fresh();
             $this->notifyInitiator($fresh, $approver, $decision, $comment);
+            $this->dispatchSubjectHook($fresh);
             return $fresh;
         });
+    }
+
+    /**
+     * When a workflow instance reaches a final state and its subject implements a hook,
+     * notify the appropriate service (e.g. convert ProjectRequest to Project).
+     */
+    private function dispatchSubjectHook(WorkflowInstance $instance): void
+    {
+        if ($instance->subject_type === \App\Models\ProjectRequest::class) {
+            app(\App\Services\ProjectRequestService::class)->syncFromInstance($instance);
+        }
     }
 
     public function cancel(WorkflowInstance $instance, ?string $reason = null): void

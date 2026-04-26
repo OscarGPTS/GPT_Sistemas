@@ -52,6 +52,16 @@ class RolesPermissionsSeeder extends Seeder
             ['name' => 'users.view', 'label' => 'Ver usuarios', 'group' => 'users'],
             ['name' => 'users.manage', 'label' => 'Gestionar usuarios', 'group' => 'users'],
             ['name' => 'audit.view', 'label' => 'Ver auditoría', 'group' => 'audit'],
+            // Projects
+            ['name' => 'projects.view', 'label' => 'Ver proyectos', 'group' => 'projects'],
+            ['name' => 'projects.create', 'label' => 'Crear proyectos', 'group' => 'projects'],
+            ['name' => 'projects.update', 'label' => 'Actualizar proyectos', 'group' => 'projects'],
+            ['name' => 'projects.delete', 'label' => 'Eliminar proyectos', 'group' => 'projects'],
+            ['name' => 'projects.manage_members', 'label' => 'Gestionar miembros', 'group' => 'projects'],
+            ['name' => 'project_requests.view', 'label' => 'Ver solicitudes', 'group' => 'projects'],
+            ['name' => 'project_requests.create', 'label' => 'Crear solicitudes', 'group' => 'projects'],
+            ['name' => 'tasks.view', 'label' => 'Ver tareas', 'group' => 'projects'],
+            ['name' => 'tasks.manage', 'label' => 'Gestionar tareas', 'group' => 'projects'],
         ];
 
         foreach ($permissions as $data) {
@@ -60,21 +70,28 @@ class RolesPermissionsSeeder extends Seeder
 
         $map = [
             'admin' => Permission::pluck('id')->all(),
-            'it' => Permission::whereIn('group', ['assets', 'assignments', 'maintenance', 'tickets', 'reports', 'workflows'])
+            'it' => Permission::whereIn('group', ['assets', 'assignments', 'maintenance', 'tickets', 'reports', 'workflows', 'projects'])
                 ->pluck('id')->all(),
             'manager' => Permission::whereIn('name', [
                 'assets.view', 'assignments.view', 'tickets.view', 'tickets.create',
                 'approvals.view', 'approvals.decide', 'reports.view',
+                'projects.view', 'projects.create', 'projects.update', 'projects.manage_members',
+                'project_requests.view', 'project_requests.create',
+                'tasks.view', 'tasks.manage',
             ])->pluck('id')->all(),
             'hr' => Permission::whereIn('name', [
                 'users.view', 'approvals.view', 'approvals.decide', 'reports.view',
+                'projects.view', 'project_requests.view',
             ])->pluck('id')->all(),
             'user' => Permission::whereIn('name', [
                 'assets.view', 'tickets.view', 'tickets.create', 'assignments.view',
+                'projects.view', 'project_requests.create', 'project_requests.view',
+                'tasks.view',
             ])->pluck('id')->all(),
             'auditor' => Permission::whereIn('name', [
                 'assets.view', 'assignments.view', 'maintenance.view', 'tickets.view',
                 'workflows.view', 'approvals.view', 'reports.view', 'audit.view', 'users.view',
+                'projects.view', 'project_requests.view', 'tasks.view',
             ])->pluck('id')->all(),
         ];
 

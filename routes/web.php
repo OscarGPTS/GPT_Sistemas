@@ -8,8 +8,12 @@ use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MaintenanceController;
+use App\Http\Controllers\BoardController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ProjectRequestController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorkflowController;
@@ -129,6 +133,60 @@ Route::middleware(['auth'])->group(function () {
     // Audit
     Route::middleware('permission:audit.view')->group(function () {
         Route::get('/audit', [AuditController::class, 'index'])->name('audit.index');
+    });
+
+    // ============================================
+    // PROJECTS / KANBAN
+    // ============================================
+    Route::middleware('permission:projects.view')->group(function () {
+        Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
+        Route::get('/projects/{project:slug}', [ProjectController::class, 'show'])->name('projects.show');
+        Route::get('/projects/{project:slug}/board', [BoardController::class, 'show'])->name('projects.board');
+    });
+    Route::middleware('permission:projects.create')->group(function () {
+        Route::get('/projects/create/new', [ProjectController::class, 'create'])->name('projects.create');
+        Route::post('/projects', [ProjectController::class, 'store'])->name('projects.store');
+    });
+    Route::middleware('permission:projects.update')->group(function () {
+        Route::get('/projects/{project:slug}/edit', [ProjectController::class, 'edit'])->name('projects.edit');
+        Route::put('/projects/{project:slug}', [ProjectController::class, 'update'])->name('projects.update');
+        Route::post('/projects/{project:slug}/archive', [ProjectController::class, 'archive'])->name('projects.archive');
+    });
+    Route::middleware('permission:projects.delete')->delete('/projects/{project:slug}', [ProjectController::class, 'destroy'])->name('projects.destroy');
+
+    // Project requests
+    Route::middleware('permission:project_requests.view')->group(function () {
+        Route::get('/project-requests', [ProjectRequestController::class, 'index'])->name('project_requests.index');
+        Route::get('/project-requests/{projectRequest}', [ProjectRequestController::class, 'show'])->name('project_requests.show');
+    });
+    Route::middleware('permission:project_requests.create')->group(function () {
+        Route::get('/project-requests/create/new', [ProjectRequestController::class, 'create'])->name('project_requests.create');
+        Route::post('/project-requests', [ProjectRequestController::class, 'store'])->name('project_requests.store');
+        Route::post('/project-requests/{projectRequest}/submit', [ProjectRequestController::class, 'submit'])->name('project_requests.submit');
+    });
+    Route::middleware('permission:projects.create')->post('/project-requests/{projectRequest}/convert', [ProjectRequestController::class, 'convert'])->name('project_requests.convert');
+
+    // Tasks
+    Route::middleware('permission:tasks.view')->group(function () {
+        Route::get('/tasks/{task}', [TaskController::class, 'show'])->name('tasks.show');
+        Route::get('/tasks/attachment/{id}', [TaskController::class, 'downloadAttachment'])->name('tasks.attachment');
+    });
+    Route::middleware('permission:tasks.manage')->group(function () {
+        Route::post('/projects/{project:slug}/tasks', [TaskController::class, 'store'])->name('tasks.store');
+        Route::put('/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
+        Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
+        Route::post('/tasks/{task}/move', [BoardController::class, 'moveTask'])->name('tasks.move');
+        Route::post('/tasks/{task}/comment', [TaskController::class, 'comment'])->name('tasks.comment');
+        Route::post('/tasks/{task}/attachments', [TaskController::class, 'uploadAttachment'])->name('tasks.attachments.store');
+        Route::post('/tasks/{task}/checklists', [TaskController::class, 'storeChecklist'])->name('tasks.checklists.store');
+        Route::delete('/checklists/{checklist}', [TaskController::class, 'destroyChecklist'])->name('checklists.destroy');
+        Route::post('/checklists/{checklist}/items', [TaskController::class, 'storeChecklistItem'])->name('checklists.items.store');
+        Route::post('/checklist-items/{item}/toggle', [TaskController::class, 'toggleChecklistItem'])->name('checklist_items.toggle');
+        Route::delete('/checklist-items/{item}', [TaskController::class, 'destroyChecklistItem'])->name('checklist_items.destroy');
+        // Board columns
+        Route::post('/boards/{board}/columns', [BoardController::class, 'storeColumn'])->name('board_columns.store');
+        Route::put('/board-columns/{column}', [BoardController::class, 'updateColumn'])->name('board_columns.update');
+        Route::delete('/board-columns/{column}', [BoardController::class, 'destroyColumn'])->name('board_columns.destroy');
     });
 
     // Notifications (inbox + bell dropdown)

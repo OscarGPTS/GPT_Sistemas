@@ -126,6 +126,16 @@
             <div class="px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-slate-500">Servicio</div>
             {!! $navItem(route('tickets.index'), 'Tickets', $icon['ticket'], $isActive('tickets.')) !!}
 
+            @if($u && ($u->isAdmin() || $u->hasPermission('projects.view') || $u->hasPermission('project_requests.view')))
+                <div class="px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-slate-500">Proyectos</div>
+                @if($u->isAdmin() || $u->hasPermission('projects.view'))
+                    {!! $navItem(route('projects.index'), 'Tableros', '<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h6v10.5h-6v-10.5zm10.5 0h6v6h-6v-6zm0 10.5h6v-2.25h-6v2.25z"/></svg>', $isActive(['projects.', 'tasks.'])) !!}
+                @endif
+                @if($u->isAdmin() || $u->hasPermission('project_requests.view'))
+                    {!! $navItem(route('project_requests.index'), 'Solicitudes', '<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>', $isActive('project_requests.')) !!}
+                @endif
+            @endif
+
             <div class="px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-slate-500">Flujos</div>
             @if($u && ($u->isAdmin() || $u->hasPermission('workflows.view')))
                 {!! $navItem(route('workflows.index'), 'Configurar flujos', $icon['flow'], $isActive('workflows.index')) !!}

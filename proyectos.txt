@@ -1,0 +1,206 @@
+MÓDULO DE GESTIÓN DE PROYECTOS (TIPO KANBAN)
+
+---
+
+1. OBJETIVO
+
+Permitir gestionar solicitudes de proyectos desde su aprobación hasta su ejecución mediante un tablero visual tipo Kanban, integrado con tickets, activos y workflows.
+
+---
+
+2. CONCEPTO GENERAL
+
+Se implementará un tablero tipo Trello con:
+
+* Columnas (estados)
+* Tarjetas (tareas / requerimientos)
+* Movimiento visual (drag & drop)
+* Flujo configurable
+
+---
+
+3. ENTIDADES PRINCIPALES
+
+3.1 Proyectos
+
+* Nombre
+* Descripción
+* Área solicitante
+* Responsable
+* Fecha inicio / fin
+* Estado (Planeación, En curso, Pausado, Finalizado)
+
+Relación:
+
+* Proyecto → múltiples tareas
+
+---
+
+3.2 Solicitudes de Proyecto
+
+Antes de ser proyecto formal:
+
+* Usuario solicitante
+* Justificación
+* Impacto
+* Prioridad
+* Presupuesto estimado
+
+Flujo:
+
+* Pasa por aprobación (usa tu módulo de workflows)
+* Al aprobarse → se convierte en proyecto
+
+---
+
+3.3 Tablero Kanban
+
+Cada proyecto tiene su tablero:
+
+Columnas por defecto:
+
+* Backlog
+* Pendiente
+* En progreso
+* En revisión
+* Completado
+
+Configurables por proyecto
+
+---
+
+3.4 Tareas (Cards)
+
+Cada tarjeta debe tener:
+
+* Título
+* Descripción
+* Responsable
+* Prioridad
+* Fecha límite
+* Estado (columna actual)
+* Etiquetas (tags)
+
+Relaciones:
+
+* Tarea → Proyecto
+* Tarea → Usuario
+* Tarea → Tickets (opcional)
+* Tarea → Activos (opcional)
+
+---
+
+4. FUNCIONALIDADES CLAVE
+
+4.1 Gestión visual
+
+* Drag & drop entre columnas
+* Actualización automática de estado
+
+4.2 Comentarios
+
+* Conversación dentro de cada tarea
+
+4.3 Adjuntos
+
+* Subida de archivos (evidencia, documentos)
+
+4.4 Checklist por tarea
+
+* Subtareas marcables (tipo checklist)
+
+4.5 Historial
+
+* Movimientos entre columnas
+* Cambios de responsable
+* Ediciones
+
+---
+
+5. INTEGRACIÓN CON TU SISTEMA
+
+5.1 Con workflows
+
+* Proyecto inicia solo si solicitud fue aprobada
+
+5.2 Con tickets
+
+* Una tarea puede generar tickets
+* Un ticket puede estar ligado a una tarea
+
+5.3 Con activos
+
+* Tareas relacionadas a equipos (ej. instalación, mantenimiento)
+
+---
+
+6. ROLES EN PROYECTOS
+
+* Administrador
+* Project Manager
+* Colaborador
+* Observador
+
+Permisos:
+
+* Crear proyectos
+* Crear tareas
+* Mover tarjetas
+* Asignar responsables
+
+---
+
+7. REPORTES DE PROYECTOS
+
+* Proyectos activos vs finalizados
+* Tareas por estado
+* Tareas vencidas
+* Carga de trabajo por usuario
+* Tiempo promedio por tarea
+
+---
+
+8. ESCALABILIDAD
+
+* Columnas configurables (no hardcode)
+* Estados dinámicos
+* Soporte para múltiples tableros por proyecto
+* API desacoplada
+
+---
+
+9. MODELO DE DATOS
+
+* projects
+* project_requests
+* boards
+* columns
+* tasks
+* task_comments
+* task_attachments
+* task_checklists
+* task_checklist_items
+* task_history
+
+---
+
+10. MVP (RECOMENDADO)
+
+* Crear proyectos
+* Tablero básico (Kanban)
+* Tareas con drag & drop
+* Asignación de responsables
+* Integración con workflows (aprobación inicial)
+
+---
+
+11. FASE FUTURA (TIPO PRO)
+
+* Gantt (timeline)
+* Dependencias entre tareas
+* Estimaciones (story points)
+* Automatizaciones (ej. mover a "Done" al cerrar ticket)
+
+---
+
+FIN DEL MÓDULO
