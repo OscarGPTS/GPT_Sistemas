@@ -1,0 +1,150 @@
+MÓDULO DE USUARIOS DE DISPOSITIVOS (IMPRESORAS)
+
+---
+
+1. OBJETIVO
+   Gestionar usuarios internos para dispositivos como impresoras (ej. Kyocera), permitiendo asignación de códigos, organización por ubicación (plantas) y control de visualización.
+
+---
+
+2. CONCEPTO GENERAL
+
+El sistema debe permitir:
+
+* Registrar usuarios de impresión
+* Asignar códigos (PIN / ID)
+* Organizar por ubicación (planta, área)
+* Restringir visualización según usuario
+
+---
+
+3. ENTIDADES PRINCIPALES
+
+---
+
+3.1 device_users
+
+Campos:
+
+* id
+* employee_id (ID empleado)
+* nombre_completo
+* buzon (opcional)
+* codigo (PIN / código de impresión)
+* location_id
+* estatus (activo/inactivo)
+* created_at / updated_at
+
+---
+
+3.2 locations
+
+Permite estructura jerárquica (escalable):
+
+Campos:
+
+* id
+* nombre (ej. Planta Baja, Planta Alta)
+* tipo (planta, edificio, área)
+* parent_id (nullable para jerarquía)
+* estatus
+
+Ejemplo:
+
+* Planta Baja
+* Planta Alta
+* Edificio A → Planta 1 → Área RH
+
+---
+
+4. RELACIONES
+
+* device_users → pertenece a → location
+* locations → puede tener → sub-ubicaciones (self reference)
+
+---
+
+5. FUNCIONALIDADES
+
+---
+
+5.1 Administración (TI)
+
+* Crear usuarios
+* Editar usuarios
+* Asignar / cambiar código
+* Asignar ubicación
+* Activar / desactivar usuarios
+
+---
+
+5.2 Vista de usuario final
+
+* Solo puede ver:
+
+  * su nombre
+  * su código
+  * su ubicación
+
+Restricción:
+
+* No puede ver otros usuarios
+
+---
+
+5.3 Búsqueda y filtros
+
+* Por nombre
+* Por ID empleado
+* Por ubicación
+* Por estatus
+
+---
+
+6. SEGURIDAD
+
+* Solo TI/Admin puede ver todos los registros
+* Usuarios solo ven su propio registro
+* Opcional:
+
+  * ocultar parcialmente código (ej. ****1234)
+
+---
+
+7. POSIBLES EXTENSIONES
+
+* Relación con impresoras específicas:
+
+  * tabla: printers
+  * asignación de usuarios por impresora
+
+* Control de uso:
+
+  * logs de impresión (si el hardware lo permite)
+
+* Reportes:
+
+  * usuarios por área
+  * usuarios activos/inactivos
+
+---
+
+8. TABLAS
+
+* device_users
+* locations
+* (opcional) printers
+* (opcional) printer_user_assignments
+
+---
+
+9. MVP
+
+* CRUD de usuarios
+* Asignación de código
+* Organización por ubicación
+* Vista restringida para usuario
+
+---
+
+FIN DEL MÓDULO

@@ -1,0 +1,225 @@
+MÓDULO DE GESTIÓN DE ACCESOS (CREDENCIALES SEGURAS)
+
+---
+
+1. OBJETIVO
+   Centralizar y proteger accesos a equipos, servicios y dispositivos, garantizando seguridad, control de acceso, auditoría y exposición limitada de credenciales.
+
+---
+
+2. PRINCIPIOS DE SEGURIDAD
+
+* Contraseñas cifradas (AES-256 usando Laravel)
+* Nunca almacenar ni mostrar contraseñas en texto plano
+* Acceso restringido por roles
+* Exposición temporal controlada
+* Auditoría obligatoria de accesos
+
+---
+
+3. MODELO DE DATOS (NORMALIZADO Y ESCALABLE)
+
+3.1 access_types
+Define el tipo de acceso:
+
+* Servidor
+* Antena WiFi
+* Cámara
+* Servicio web
+* Correo
+* Otro
+
+---
+
+3.2 accesses
+
+Campos:
+
+* nombre
+* tipo_id
+* ip (opcional)
+* url (opcional)
+* ubicación (opcional)
+* notas
+
+---
+
+3.3 access_fields
+
+Define campos dinámicos por tipo:
+Ejemplo:
+
+* usuario
+* contraseña
+* pin
+* ssid
+* modo
+
+---
+
+3.4 access_values
+
+Campos:
+
+* access_id
+* field_id
+* valor (cifrado si es sensible)
+* es_sensible (boolean)
+
+---
+
+✔ Permite flexibilidad sin múltiples tablas específicas
+
+---
+
+4. CONTROL DE ACCESO
+
+Roles:
+
+* Super Admin → acceso total
+* Security Admin → acceso a credenciales
+* TI → acceso limitado (sin ver contraseñas por defecto)
+
+Restricciones:
+
+* Solo roles autorizados pueden solicitar acceso a credenciales
+* Validación adicional obligatoria antes de mostrar
+
+---
+
+5. MECANISMO DE VISUALIZACIÓN SEGURA
+
+NO se muestran contraseñas directamente.
+
+Flujo:
+
+1. Usuario autorizado presiona “Ver / Copiar contraseña”
+
+2. Sistema solicita validación adicional:
+
+   * Re-autenticación (vía Auth0) o
+   * OTP (código de un solo uso enviado por correo)
+
+3. Si valida correctamente:
+
+   * Se genera acceso temporal (30–120 segundos)
+   * Se permite:
+
+     * Copiar contraseña al portapapeles
+     * (Opcional) mostrar en modal temporal
+
+4. Después del tiempo:
+
+   * Se invalida el acceso automáticamente
+
+---
+
+6. EXPOSICIÓN CONTROLADA
+
+* Contraseñas enmascaradas por defecto: ********
+* No renderizar contraseñas en tablas ni listados
+* No almacenar en frontend (ni en variables persistentes JS)
+* Preferencia: botón “Copiar” en lugar de mostrar
+
+---
+
+7. AUDITORÍA DE ACCESO A CREDENCIALES (CRÍTICO)
+
+Registrar cada acceso:
+
+Campos:
+
+* usuario_id
+* access_id
+* campo accedido (ej. contraseña, pin)
+* acción (VIEW / COPY)
+* fecha y hora
+* IP
+* user_agent
+* motivo (campo obligatorio)
+
+Reglas:
+
+* Logs inmutables
+* Solo lectura para auditor
+* No se eliminan
+
+---
+
+8. ROTACIÓN DE CREDENCIALES (RECOMENDADO)
+
+* Campo: fecha de última actualización
+* Alertas:
+
+  * contraseñas antiguas (ej. >90 días)
+* (Opcional) historial de versiones cifradas
+
+---
+
+9. SEGURIDAD BACKEND
+
+* Endpoint protegido:
+
+  * /access/{id}/reveal
+
+* Validaciones:
+
+  * rol
+  * OTP / re-auth
+  * ventana de tiempo activa
+
+* Nunca enviar contraseñas en APIs abiertas
+
+---
+
+10. GESTIÓN DE DOCUMENTOS (OPCIONAL)
+
+* Relación con accesos:
+
+  * manuales
+  * configuraciones
+* Almacenamiento seguro
+
+---
+
+11. VISUALIZACIÓN DE CÁMARAS
+
+* Soporte para cámaras IP con:
+
+  * RTSP / HTTP stream
+
+Implementación:
+
+* Guardar URL de stream
+* Renderizar con reproductor web (HLS)
+
+Limitaciones:
+
+* DVR antiguos pueden no ser compatibles
+* No exponer credenciales en frontend
+
+---
+
+12. TABLAS PRINCIPALES
+
+* access_types
+* accesses
+* access_fields
+* access_values
+* access_access_logs (auditoría de consultas)
+* otp_tokens (si se implementa OTP)
+
+---
+
+13. MVP SEGURO
+
+* CRUD de accesos
+* Cifrado de credenciales
+* Roles y permisos
+* Botón “Copiar contraseña”
+* OTP por correo
+* Logs de auditoría
+
+---
+
+FIN DEL MÓDULO
