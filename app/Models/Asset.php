@@ -67,6 +67,19 @@ class Asset extends Model
         return $this->hasMany(Ticket::class);
     }
 
+    public function deviceUsers(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(DeviceUser::class, 'device_user_asset')
+            ->withPivot('granted_at', 'granted_by')
+            ->withTimestamps();
+    }
+
+    public function isPrinter(): bool
+    {
+        return $this->type === 'printer'
+            || str_contains(strtolower((string) $this->category?->name), 'impresor');
+    }
+
     public function isAvailable(): bool
     {
         return $this->status === 'available';

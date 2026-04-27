@@ -9,9 +9,11 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\BoardController;
+use App\Http\Controllers\DeviceUserController;
 use App\Http\Controllers\EquipmentRequestController;
 use App\Http\Controllers\ExpenseCategoryController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\LocationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectRequestController;
@@ -232,6 +234,37 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/expense-categories', [ExpenseCategoryController::class, 'store'])->name('expense_categories.store');
         Route::put('/expense-categories/{expenseCategory}', [ExpenseCategoryController::class, 'update'])->name('expense_categories.update');
         Route::delete('/expense-categories/{expenseCategory}', [ExpenseCategoryController::class, 'destroy'])->name('expense_categories.destroy');
+    });
+
+    // ============================================
+    // DIRECTORY (Locations + Device Users)
+    // ============================================
+    // "Mi código de impresión" — todos los autenticados
+    Route::get('/my-print-code', [DeviceUserController::class, 'mine'])->name('device_users.mine');
+
+    Route::middleware('permission:locations.view')->group(function () {
+        Route::get('/locations', [LocationController::class, 'index'])->name('locations.index');
+    });
+    Route::middleware('permission:locations.manage')->group(function () {
+        Route::get('/locations/create/new', [LocationController::class, 'create'])->name('locations.create');
+        Route::post('/locations', [LocationController::class, 'store'])->name('locations.store');
+        Route::get('/locations/{location}/edit', [LocationController::class, 'edit'])->name('locations.edit');
+        Route::put('/locations/{location}', [LocationController::class, 'update'])->name('locations.update');
+        Route::delete('/locations/{location}', [LocationController::class, 'destroy'])->name('locations.destroy');
+    });
+
+    Route::middleware('permission:device_users.view')->group(function () {
+        Route::get('/device-users', [DeviceUserController::class, 'index'])->name('device_users.index');
+        Route::get('/device-users/{deviceUser}', [DeviceUserController::class, 'show'])->name('device_users.show');
+    });
+    Route::middleware('permission:device_users.manage')->group(function () {
+        Route::get('/device-users/create/new', [DeviceUserController::class, 'create'])->name('device_users.create');
+        Route::post('/device-users', [DeviceUserController::class, 'store'])->name('device_users.store');
+        Route::get('/device-users/{deviceUser}/edit', [DeviceUserController::class, 'edit'])->name('device_users.edit');
+        Route::put('/device-users/{deviceUser}', [DeviceUserController::class, 'update'])->name('device_users.update');
+        Route::delete('/device-users/{deviceUser}', [DeviceUserController::class, 'destroy'])->name('device_users.destroy');
+        Route::post('/device-users/{deviceUser}/regenerate-code', [DeviceUserController::class, 'regenerateCode'])->name('device_users.regenerate');
+        Route::post('/device-users/{deviceUser}/toggle', [DeviceUserController::class, 'toggleActive'])->name('device_users.toggle');
     });
 
     // Notifications (inbox + bell dropdown)

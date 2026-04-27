@@ -83,6 +83,7 @@ class DatabaseSeeder extends Seeder
             DemoDataSeeder::class,
             ProjectSeeder::class,
             ProcurementSeeder::class,
+            DirectorySeeder::class,
         ]);
     }
 }

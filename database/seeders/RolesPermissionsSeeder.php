@@ -73,6 +73,11 @@ class RolesPermissionsSeeder extends Seeder
             ['name' => 'expenses.view', 'label' => 'Ver gastos', 'group' => 'finance'],
             ['name' => 'expenses.manage', 'label' => 'Registrar gastos', 'group' => 'finance'],
             ['name' => 'expense_categories.manage', 'label' => 'Gestionar categorías', 'group' => 'finance'],
+            // Directory (locations + device users)
+            ['name' => 'locations.view', 'label' => 'Ver ubicaciones', 'group' => 'directory'],
+            ['name' => 'locations.manage', 'label' => 'Gestionar ubicaciones', 'group' => 'directory'],
+            ['name' => 'device_users.view', 'label' => 'Ver usuarios de impresión', 'group' => 'directory'],
+            ['name' => 'device_users.manage', 'label' => 'Gestionar usuarios de impresión', 'group' => 'directory'],
         ];
 
         foreach ($permissions as $data) {
@@ -81,7 +86,7 @@ class RolesPermissionsSeeder extends Seeder
 
         $map = [
             'admin' => Permission::pluck('id')->all(),
-            'it' => Permission::whereIn('group', ['assets', 'assignments', 'maintenance', 'tickets', 'reports', 'workflows', 'projects', 'procurement', 'finance'])
+            'it' => Permission::whereIn('group', ['assets', 'assignments', 'maintenance', 'tickets', 'reports', 'workflows', 'projects', 'procurement', 'finance', 'directory'])
                 ->pluck('id')->all(),
             'manager' => Permission::whereIn('name', [
                 'assets.view', 'assignments.view', 'tickets.view', 'tickets.create',
@@ -102,12 +107,14 @@ class RolesPermissionsSeeder extends Seeder
                 'projects.view', 'project_requests.create', 'project_requests.view',
                 'tasks.view',
                 'equipment_requests.view', 'equipment_requests.create',
+                'locations.view',
             ])->pluck('id')->all(),
             'auditor' => Permission::whereIn('name', [
                 'assets.view', 'assignments.view', 'maintenance.view', 'tickets.view',
                 'workflows.view', 'approvals.view', 'reports.view', 'audit.view', 'users.view',
                 'projects.view', 'project_requests.view', 'tasks.view',
                 'equipment_requests.view', 'expenses.view',
+                'locations.view', 'device_users.view',
             ])->pluck('id')->all(),
             'petty_cash' => Permission::whereIn('name', [
                 'equipment_requests.view', 'equipment_requests.purchase', 'equipment_requests.deliver',

@@ -95,6 +95,11 @@ class User extends Authenticatable
         return $this->hasMany(Task::class, 'assignee_id');
     }
 
+    public function deviceProfile(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(DeviceUser::class);
+    }
+
     public function hasRole(string|array $name): bool
     {
         $names = is_array($name) ? $name : [$name];

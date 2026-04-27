@@ -202,6 +202,36 @@
                 @endforelse
             </ul>
         </div>
+
+        @if($asset->isPrinter())
+            <!-- Print users authorized for this printer -->
+            <div class="bg-white rounded-xl shadow-card border border-slate-200 overflow-hidden">
+                <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center">
+                    <h3 class="font-semibold text-slate-900">Usuarios de impresión</h3>
+                    @if(auth()->user()->isAdmin() || auth()->user()->hasPermission('device_users.manage'))
+                        <a href="{{ route('device_users.create') }}" class="text-xs text-brand-600 hover:underline">+ Asignar</a>
+                    @endif
+                </div>
+                <ul class="divide-y divide-slate-100">
+                    @forelse($asset->deviceUsers as $du)
+                        <li class="px-5 py-3 flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 text-white flex items-center justify-center text-xs font-semibold flex-shrink-0">{{ strtoupper(substr($du->full_name, 0, 1)) }}</div>
+                            <div class="flex-1 min-w-0">
+                                <a href="{{ route('device_users.show', $du) }}" class="text-sm font-medium text-slate-800 hover:text-brand-600 truncate block">{{ $du->full_name }}</a>
+                                <div class="text-xs text-slate-500">{{ $du->location?->name ?? '—' }}</div>
+                            </div>
+                            @if($du->isVisibleTo(auth()->user()))
+                                <span class="font-mono text-xs bg-amber-50 px-2 py-0.5 rounded">{{ $du->print_code }}</span>
+                            @else
+                                <span class="font-mono text-xs text-slate-400">{{ $du->maskedPrintCode() }}</span>
+                            @endif
+                        </li>
+                    @empty
+                        <li class="px-5 py-6 text-center text-slate-400 text-sm">Sin usuarios autorizados (acceso abierto).</li>
+                    @endforelse
+                </ul>
+            </div>
+        @endif
     </div>
 </div>
 @endsection

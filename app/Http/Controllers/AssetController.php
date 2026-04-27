@@ -72,6 +72,7 @@ class AssetController extends Controller
             'maintenanceRecords' => fn ($q) => $q->latest('scheduled_date'),
             'maintenanceSchedules',
             'tickets' => fn ($q) => $q->latest()->limit(10),
+            'deviceUsers.location',
         ]);
         return view('assets.show', compact('asset'));
     }
