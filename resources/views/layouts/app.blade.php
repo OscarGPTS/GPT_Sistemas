@@ -136,6 +136,16 @@
                 @endif
             @endif
 
+            @if($u && ($u->isAdmin() || $u->hasPermission('equipment_requests.view') || $u->hasPermission('expenses.view')))
+                <div class="px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-slate-500">Compras y Gastos</div>
+                @if($u->isAdmin() || $u->hasPermission('equipment_requests.view'))
+                    {!! $navItem(route('equipment_requests.index'), 'Solicitudes equipo', '<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/></svg>', $isActive('equipment_requests.')) !!}
+                @endif
+                @if($u->isAdmin() || $u->hasPermission('expenses.view'))
+                    {!! $navItem(route('expenses.index'), 'Gastos TI', '<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.306a11.95 11.95 0 015.814-5.518l2.74-1.22m0 0l-5.94-2.281m5.94 2.28l-2.28 5.941"/></svg>', $isActive('expenses.')) !!}
+                @endif
+            @endif
+
             <div class="px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-slate-500">Flujos</div>
             @if($u && ($u->isAdmin() || $u->hasPermission('workflows.view')))
                 {!! $navItem(route('workflows.index'), 'Configurar flujos', $icon['flow'], $isActive('workflows.index')) !!}

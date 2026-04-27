@@ -82,6 +82,7 @@ class DatabaseSeeder extends Seeder
             WorkflowSeeder::class,
             DemoDataSeeder::class,
             ProjectSeeder::class,
+            ProcurementSeeder::class,
         ]);
     }
 }

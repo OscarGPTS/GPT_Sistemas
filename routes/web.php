@@ -9,6 +9,9 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\BoardController;
+use App\Http\Controllers\EquipmentRequestController;
+use App\Http\Controllers\ExpenseCategoryController;
+use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectRequestController;
@@ -187,6 +190,48 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/boards/{board}/columns', [BoardController::class, 'storeColumn'])->name('board_columns.store');
         Route::put('/board-columns/{column}', [BoardController::class, 'updateColumn'])->name('board_columns.update');
         Route::delete('/board-columns/{column}', [BoardController::class, 'destroyColumn'])->name('board_columns.destroy');
+    });
+
+    // ============================================
+    // EQUIPMENT REQUESTS (compras de TI)
+    // ============================================
+    Route::middleware('permission:equipment_requests.view')->group(function () {
+        Route::get('/equipment-requests', [EquipmentRequestController::class, 'index'])->name('equipment_requests.index');
+        Route::get('/equipment-requests/{equipmentRequest}', [EquipmentRequestController::class, 'show'])->name('equipment_requests.show');
+        Route::get('/equipment-requests/documents/{id}', [EquipmentRequestController::class, 'downloadDocument'])->name('equipment_requests.documents.download');
+    });
+    Route::middleware('permission:equipment_requests.create')->group(function () {
+        Route::get('/equipment-requests/create/new', [EquipmentRequestController::class, 'create'])->name('equipment_requests.create');
+        Route::post('/equipment-requests', [EquipmentRequestController::class, 'store'])->name('equipment_requests.store');
+        Route::post('/equipment-requests/{equipmentRequest}/submit', [EquipmentRequestController::class, 'submit'])->name('equipment_requests.submit');
+        Route::post('/equipment-requests/{equipmentRequest}/cancel', [EquipmentRequestController::class, 'cancel'])->name('equipment_requests.cancel');
+        Route::post('/equipment-requests/{equipmentRequest}/documents', [EquipmentRequestController::class, 'uploadDocument'])->name('equipment_requests.documents.upload');
+    });
+    Route::middleware('permission:equipment_requests.validate')->post('/equipment-requests/{equipmentRequest}/validate', [EquipmentRequestController::class, 'validateIt'])->name('equipment_requests.validate');
+    Route::middleware('permission:equipment_requests.purchase')->post('/equipment-requests/{equipmentRequest}/purchase', [EquipmentRequestController::class, 'purchase'])->name('equipment_requests.purchase');
+    Route::middleware('permission:equipment_requests.deliver')->post('/equipment-requests/{equipmentRequest}/deliver', [EquipmentRequestController::class, 'deliver'])->name('equipment_requests.deliver');
+
+    // ============================================
+    // EXPENSES (gastos TI)
+    // ============================================
+    Route::middleware('permission:expenses.view')->group(function () {
+        Route::get('/expenses', [ExpenseController::class, 'index'])->name('expenses.index');
+        Route::get('/expenses/export/csv', [ExpenseController::class, 'exportCsv'])->name('expenses.export');
+        Route::get('/expenses/{expense}', [ExpenseController::class, 'show'])->name('expenses.show');
+        Route::get('/expenses/documents/{id}', [ExpenseController::class, 'downloadDocument'])->name('expenses.documents.download');
+    });
+    Route::middleware('permission:expenses.manage')->group(function () {
+        Route::get('/expenses/create/new', [ExpenseController::class, 'create'])->name('expenses.create');
+        Route::post('/expenses', [ExpenseController::class, 'store'])->name('expenses.store');
+        Route::get('/expenses/{expense}/edit', [ExpenseController::class, 'edit'])->name('expenses.edit');
+        Route::put('/expenses/{expense}', [ExpenseController::class, 'update'])->name('expenses.update');
+        Route::delete('/expenses/{expense}', [ExpenseController::class, 'destroy'])->name('expenses.destroy');
+    });
+    Route::middleware('permission:expense_categories.manage')->group(function () {
+        Route::get('/expense-categories', [ExpenseCategoryController::class, 'index'])->name('expense_categories.index');
+        Route::post('/expense-categories', [ExpenseCategoryController::class, 'store'])->name('expense_categories.store');
+        Route::put('/expense-categories/{expenseCategory}', [ExpenseCategoryController::class, 'update'])->name('expense_categories.update');
+        Route::delete('/expense-categories/{expenseCategory}', [ExpenseCategoryController::class, 'destroy'])->name('expense_categories.destroy');
     });
 
     // Notifications (inbox + bell dropdown)

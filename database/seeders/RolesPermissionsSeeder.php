@@ -17,6 +17,7 @@ class RolesPermissionsSeeder extends Seeder
             ['name' => 'hr', 'label' => 'Recursos Humanos', 'description' => 'Gestión de personas y procesos'],
             ['name' => 'user', 'label' => 'Usuario estándar', 'description' => 'Solicita tickets y consulta sus activos'],
             ['name' => 'auditor', 'label' => 'Auditor', 'description' => 'Solo lectura y reportes'],
+            ['name' => 'petty_cash', 'label' => 'Caja Chica', 'description' => 'Registra compras y sube facturas'],
         ];
 
         foreach ($roles as $data) {
@@ -62,6 +63,16 @@ class RolesPermissionsSeeder extends Seeder
             ['name' => 'project_requests.create', 'label' => 'Crear solicitudes', 'group' => 'projects'],
             ['name' => 'tasks.view', 'label' => 'Ver tareas', 'group' => 'projects'],
             ['name' => 'tasks.manage', 'label' => 'Gestionar tareas', 'group' => 'projects'],
+            // Equipment requests
+            ['name' => 'equipment_requests.view', 'label' => 'Ver solicitudes de equipo', 'group' => 'procurement'],
+            ['name' => 'equipment_requests.create', 'label' => 'Solicitar equipo', 'group' => 'procurement'],
+            ['name' => 'equipment_requests.validate', 'label' => 'Validar solicitudes (TI)', 'group' => 'procurement'],
+            ['name' => 'equipment_requests.purchase', 'label' => 'Registrar compras', 'group' => 'procurement'],
+            ['name' => 'equipment_requests.deliver', 'label' => 'Registrar entregas', 'group' => 'procurement'],
+            // Expenses
+            ['name' => 'expenses.view', 'label' => 'Ver gastos', 'group' => 'finance'],
+            ['name' => 'expenses.manage', 'label' => 'Registrar gastos', 'group' => 'finance'],
+            ['name' => 'expense_categories.manage', 'label' => 'Gestionar categorías', 'group' => 'finance'],
         ];
 
         foreach ($permissions as $data) {
@@ -70,7 +81,7 @@ class RolesPermissionsSeeder extends Seeder
 
         $map = [
             'admin' => Permission::pluck('id')->all(),
-            'it' => Permission::whereIn('group', ['assets', 'assignments', 'maintenance', 'tickets', 'reports', 'workflows', 'projects'])
+            'it' => Permission::whereIn('group', ['assets', 'assignments', 'maintenance', 'tickets', 'reports', 'workflows', 'projects', 'procurement', 'finance'])
                 ->pluck('id')->all(),
             'manager' => Permission::whereIn('name', [
                 'assets.view', 'assignments.view', 'tickets.view', 'tickets.create',
@@ -78,20 +89,29 @@ class RolesPermissionsSeeder extends Seeder
                 'projects.view', 'projects.create', 'projects.update', 'projects.manage_members',
                 'project_requests.view', 'project_requests.create',
                 'tasks.view', 'tasks.manage',
+                'equipment_requests.view', 'equipment_requests.create',
+                'expenses.view',
             ])->pluck('id')->all(),
             'hr' => Permission::whereIn('name', [
                 'users.view', 'approvals.view', 'approvals.decide', 'reports.view',
                 'projects.view', 'project_requests.view',
+                'equipment_requests.view',
             ])->pluck('id')->all(),
             'user' => Permission::whereIn('name', [
                 'assets.view', 'tickets.view', 'tickets.create', 'assignments.view',
                 'projects.view', 'project_requests.create', 'project_requests.view',
                 'tasks.view',
+                'equipment_requests.view', 'equipment_requests.create',
             ])->pluck('id')->all(),
             'auditor' => Permission::whereIn('name', [
                 'assets.view', 'assignments.view', 'maintenance.view', 'tickets.view',
                 'workflows.view', 'approvals.view', 'reports.view', 'audit.view', 'users.view',
                 'projects.view', 'project_requests.view', 'tasks.view',
+                'equipment_requests.view', 'expenses.view',
+            ])->pluck('id')->all(),
+            'petty_cash' => Permission::whereIn('name', [
+                'equipment_requests.view', 'equipment_requests.purchase', 'equipment_requests.deliver',
+                'expenses.view', 'expenses.manage', 'reports.view',
             ])->pluck('id')->all(),
         ];
 

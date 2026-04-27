@@ -1,0 +1,203 @@
+MÓDULO DE SOLICITUDES DE EQUIPO Y CONTROL DE GASTOS TI
+---
+
+1. OBJETIVO
+   Gestionar solicitudes de equipo desde el usuario hasta la compra (caja chica), con trazabilidad, evidencia y control de gastos.
+
+---
+
+2. MÓDULO: SOLICITUD DE EQUIPO
+
+Flujo:
+Usuario → Solicitud → Aprobación (workflow) → TI valida → Caja chica compra → Factura → Entrega
+
+---
+
+2.1 ENTIDAD: equipment_requests
+
+Campos:
+
+* solicitante_id
+* tipo (mouse, teclado, RAM, etc.)
+* descripción
+* modelo_sugerido (opcional)
+* link_compra (opcional)
+* cantidad
+* prioridad
+* justificación
+* estado:
+
+  * Pendiente
+  * En aprobación
+  * Aprobado
+  * Rechazado
+  * En compra
+  * Comprado
+  * Entregado
+
+---
+
+2.2 VALIDACIÓN TI
+
+* TI puede:
+
+  * Aprobar modelo solicitado
+  * Cambiar modelo
+  * Definir proveedor
+  * Ajustar costo estimado
+
+---
+
+2.3 COMPRA (CAJA CHICA)
+
+* Usuario de caja chica:
+
+  * Marca como "Comprado"
+  * Registra:
+
+    * costo real
+    * proveedor
+    * fecha compra
+
+---
+
+2.4 FACTURAS Y EVIDENCIA
+
+* Subida de documentos:
+
+  * Factura (PDF/XML)
+  * Ticket de compra
+
+* Visibilidad:
+
+  * TI y caja chica pueden consultar
+  * Relación:
+
+    * solicitud ↔ documento
+
+---
+
+2.5 ENTREGA
+
+* Registro de entrega:
+
+  * usuario que recibe
+  * fecha
+  * evidencia (opcional)
+
+* Puede generar:
+
+  * asignación automática de activo (si aplica)
+
+---
+
+3. INTEGRACIÓN CON OTROS MÓDULOS
+
+* Workflows → aprobaciones (jefe, dirección, etc.)
+* Activos → si es equipo inventariable
+* Auditoría → evidencia y trazabilidad
+* Reportes → costos, compras
+
+---
+
+4. MÓDULO: GASTOS RECURRENTES TI
+
+---
+
+4.1 OBJETIVO
+Controlar gastos fijos y variables de TI mensualmente.
+
+---
+
+4.2 ENTIDAD: expense_categories
+
+Ejemplos:
+
+* Internet
+* Licencias
+* Hosting
+* Hardware menor (mouse, USB, etc.)
+* Servicios externos
+
+---
+
+4.3 ENTIDAD: expenses
+
+Campos:
+
+* categoría_id
+* tipo:
+
+  * Recurrente
+  * Variable
+* concepto
+* monto
+* fecha
+* proveedor
+* comprobante (archivo)
+* notas
+
+---
+
+4.4 FUNCIONALIDADES
+
+* Registro mensual de gastos
+* Historial por categoría
+* Adjuntar comprobantes
+* Edición controlada
+
+---
+
+4.5 REPORTES
+
+* Gasto mensual total
+* Gasto por categoría
+* Tendencia mensual
+* Comparativo (mes vs mes)
+
+---
+
+5. CONTROL Y ROLES
+
+TI:
+
+* Valida solicitudes
+* Sube facturas
+
+Caja chica:
+
+* Registra compras
+* Ve solicitudes aprobadas
+
+Administrador:
+
+* Control total
+
+Usuario:
+
+* Solicita equipo
+
+---
+
+6. TABLAS NUEVAS
+
+* equipment_requests
+* equipment_request_items (opcional si hay múltiples productos)
+* purchases (opcional para separar compra)
+* expenses
+* expense_categories
+* documents (reutilizable)
+
+---
+
+7. MVP
+
+* Solicitud de equipo
+* Aprobación básica
+* Registro de compra
+* Subida de factura
+* Registro de gastos manual
+
+---
+
+FIN

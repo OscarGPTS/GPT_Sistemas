@@ -125,6 +125,9 @@ class WorkflowEngine
         if ($instance->subject_type === \App\Models\ProjectRequest::class) {
             app(\App\Services\ProjectRequestService::class)->syncFromInstance($instance);
         }
+        if ($instance->subject_type === \App\Models\EquipmentRequest::class) {
+            app(\App\Services\EquipmentRequestService::class)->syncFromInstance($instance);
+        }
     }
 
     public function cancel(WorkflowInstance $instance, ?string $reason = null): void
