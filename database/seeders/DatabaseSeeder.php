@@ -84,6 +84,7 @@ class DatabaseSeeder extends Seeder
             ProjectSeeder::class,
             ProcurementSeeder::class,
             DirectorySeeder::class,
+            SecuritySeeder::class,
         ]);
     }
 }

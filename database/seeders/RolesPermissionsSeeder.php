@@ -18,6 +18,7 @@ class RolesPermissionsSeeder extends Seeder
             ['name' => 'user', 'label' => 'Usuario estándar', 'description' => 'Solicita tickets y consulta sus activos'],
             ['name' => 'auditor', 'label' => 'Auditor', 'description' => 'Solo lectura y reportes'],
             ['name' => 'petty_cash', 'label' => 'Caja Chica', 'description' => 'Registra compras y sube facturas'],
+            ['name' => 'security_admin', 'label' => 'Admin Seguridad', 'description' => 'Gestor del vault de credenciales y cámaras'],
         ];
 
         foreach ($roles as $data) {
@@ -78,6 +79,17 @@ class RolesPermissionsSeeder extends Seeder
             ['name' => 'locations.manage', 'label' => 'Gestionar ubicaciones', 'group' => 'directory'],
             ['name' => 'device_users.view', 'label' => 'Ver usuarios de impresión', 'group' => 'directory'],
             ['name' => 'device_users.manage', 'label' => 'Gestionar usuarios de impresión', 'group' => 'directory'],
+            // Access vault
+            ['name' => 'accesses.view', 'label' => 'Ver accesos (enmascarado)', 'group' => 'security'],
+            ['name' => 'accesses.create', 'label' => 'Crear accesos', 'group' => 'security'],
+            ['name' => 'accesses.update', 'label' => 'Editar accesos', 'group' => 'security'],
+            ['name' => 'accesses.delete', 'label' => 'Eliminar accesos', 'group' => 'security'],
+            ['name' => 'accesses.reveal', 'label' => 'Revelar credenciales (con OTP)', 'group' => 'security'],
+            ['name' => 'accesses.audit', 'label' => 'Ver auditoría de accesos', 'group' => 'security'],
+            ['name' => 'access_types.manage', 'label' => 'Gestionar tipos de acceso', 'group' => 'security'],
+            // Cameras
+            ['name' => 'cameras.view', 'label' => 'Ver cámaras', 'group' => 'security'],
+            ['name' => 'cameras.manage', 'label' => 'Gestionar cámaras', 'group' => 'security'],
         ];
 
         foreach ($permissions as $data) {
@@ -87,7 +99,9 @@ class RolesPermissionsSeeder extends Seeder
         $map = [
             'admin' => Permission::pluck('id')->all(),
             'it' => Permission::whereIn('group', ['assets', 'assignments', 'maintenance', 'tickets', 'reports', 'workflows', 'projects', 'procurement', 'finance', 'directory'])
-                ->pluck('id')->all(),
+                ->pluck('id')
+                ->merge(Permission::whereIn('name', ['accesses.view', 'cameras.view', 'cameras.manage'])->pluck('id'))
+                ->unique()->all(),
             'manager' => Permission::whereIn('name', [
                 'assets.view', 'assignments.view', 'tickets.view', 'tickets.create',
                 'approvals.view', 'approvals.decide', 'reports.view',
@@ -115,11 +129,16 @@ class RolesPermissionsSeeder extends Seeder
                 'projects.view', 'project_requests.view', 'tasks.view',
                 'equipment_requests.view', 'expenses.view',
                 'locations.view', 'device_users.view',
+                'accesses.audit',
             ])->pluck('id')->all(),
             'petty_cash' => Permission::whereIn('name', [
                 'equipment_requests.view', 'equipment_requests.purchase', 'equipment_requests.deliver',
                 'expenses.view', 'expenses.manage', 'reports.view',
             ])->pluck('id')->all(),
+            'security_admin' => Permission::whereIn('group', ['security'])
+                ->pluck('id')
+                ->merge(Permission::whereIn('name', ['locations.view', 'audit.view'])->pluck('id'))
+                ->unique()->all(),
         ];
 
         foreach ($map as $role => $permissionIds) {

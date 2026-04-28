@@ -13,3 +13,9 @@ Schedule::command('gpt:send-alerts')
     ->dailyAt('07:00')
     ->onOneServer()
     ->withoutOverlapping();
+
+// Weekly Monday 8:00 AM: notify about stale passwords (>90 days)
+Schedule::command('gpt:check-stale-passwords')
+    ->weeklyOn(1, '08:00')
+    ->onOneServer()
+    ->withoutOverlapping();

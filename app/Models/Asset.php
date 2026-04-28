@@ -80,6 +80,23 @@ class Asset extends Model
             || str_contains(strtolower((string) $this->category?->name), 'impresor');
     }
 
+    public function isCamera(): bool
+    {
+        return $this->type === 'camera'
+            || str_contains(strtolower((string) $this->category?->name), 'cámar')
+            || str_contains(strtolower((string) $this->category?->name), 'camar');
+    }
+
+    public function camera(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(AssetCamera::class);
+    }
+
+    public function accesses(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Access::class);
+    }
+
     public function isAvailable(): bool
     {
         return $this->status === 'available';

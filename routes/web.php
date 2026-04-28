@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\AccessController;
 use App\Http\Controllers\AssetAssignmentController;
 use App\Http\Controllers\AssetController;
 use App\Http\Controllers\AuditController;
+use App\Http\Controllers\CameraController;
 use App\Http\Controllers\Auth\Auth0Controller;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\LoginController;
@@ -265,6 +267,42 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/device-users/{deviceUser}', [DeviceUserController::class, 'destroy'])->name('device_users.destroy');
         Route::post('/device-users/{deviceUser}/regenerate-code', [DeviceUserController::class, 'regenerateCode'])->name('device_users.regenerate');
         Route::post('/device-users/{deviceUser}/toggle', [DeviceUserController::class, 'toggleActive'])->name('device_users.toggle');
+    });
+
+    // ============================================
+    // ACCESS VAULT (credenciales seguras)
+    // ============================================
+    Route::middleware('permission:accesses.view')->group(function () {
+        Route::get('/accesses', [AccessController::class, 'index'])->name('accesses.index');
+        Route::get('/accesses/generate-password', [AccessController::class, 'generatePassword'])->name('accesses.generate_password');
+        Route::get('/accesses/{access}', [AccessController::class, 'show'])->name('accesses.show');
+    });
+    Route::middleware('permission:accesses.create')->group(function () {
+        Route::get('/accesses/create/new', [AccessController::class, 'create'])->name('accesses.create');
+        Route::post('/accesses', [AccessController::class, 'store'])->name('accesses.store');
+    });
+    Route::middleware('permission:accesses.update')->group(function () {
+        Route::get('/accesses/{access}/edit', [AccessController::class, 'edit'])->name('accesses.edit');
+        Route::put('/accesses/{access}', [AccessController::class, 'update'])->name('accesses.update');
+    });
+    Route::middleware('permission:accesses.delete')->delete('/accesses/{access}', [AccessController::class, 'destroy'])->name('accesses.destroy');
+    Route::middleware('permission:accesses.reveal')->group(function () {
+        Route::post('/accesses/{access}/otp/request', [AccessController::class, 'requestOtp'])->name('accesses.otp.request');
+        Route::post('/accesses/{access}/otp/validate', [AccessController::class, 'validateOtp'])->name('accesses.otp.validate');
+        Route::post('/accesses/{access}/reveal', [AccessController::class, 'reveal'])->name('accesses.reveal');
+    });
+    Route::middleware('permission:accesses.audit')->get('/access-logs', [AccessController::class, 'logs'])->name('accesses.logs');
+
+    // ============================================
+    // CAMERAS (extensión de Assets)
+    // ============================================
+    Route::middleware('permission:cameras.view')->group(function () {
+        Route::get('/cameras', [CameraController::class, 'index'])->name('cameras.index');
+        Route::get('/cameras/{asset}', [CameraController::class, 'show'])->name('cameras.show');
+    });
+    Route::middleware('permission:cameras.manage')->group(function () {
+        Route::get('/cameras/{asset}/edit', [CameraController::class, 'edit'])->name('cameras.edit');
+        Route::put('/cameras/{asset}', [CameraController::class, 'update'])->name('cameras.update');
     });
 
     // Notifications (inbox + bell dropdown)
