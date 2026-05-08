@@ -5,6 +5,7 @@ use App\Http\Controllers\AssetAssignmentController;
 use App\Http\Controllers\AssetController;
 use App\Http\Controllers\AuditController;
 use App\Http\Controllers\CameraController;
+use App\Http\Controllers\PresentationVideoController;
 use App\Http\Controllers\Auth\Auth0Controller;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\LoginController;
@@ -303,6 +304,18 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('permission:cameras.manage')->group(function () {
         Route::get('/cameras/{asset}/edit', [CameraController::class, 'edit'])->name('cameras.edit');
         Route::put('/cameras/{asset}', [CameraController::class, 'update'])->name('cameras.update');
+    });
+
+    // ============================================
+    // HERRAMIENTAS (Presentaciones a video)
+    // ============================================
+    Route::middleware('permission:tools.presentation_to_video')->group(function () {
+        Route::get('/presentation-videos', [PresentationVideoController::class, 'index'])->name('presentation_videos.index');
+        Route::get('/presentation-videos/create/new', [PresentationVideoController::class, 'create'])->name('presentation_videos.create');
+        Route::post('/presentation-videos', [PresentationVideoController::class, 'store'])->name('presentation_videos.store');
+        Route::get('/presentation-videos/{presentationVideo}', [PresentationVideoController::class, 'show'])->name('presentation_videos.show');
+        Route::get('/presentation-videos/{presentationVideo}/download', [PresentationVideoController::class, 'download'])->name('presentation_videos.download');
+        Route::delete('/presentation-videos/{presentationVideo}', [PresentationVideoController::class, 'destroy'])->name('presentation_videos.destroy');
     });
 
     // Notifications (inbox + bell dropdown)

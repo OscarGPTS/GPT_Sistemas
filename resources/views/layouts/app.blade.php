@@ -177,6 +177,11 @@
                 {!! $navItem(route('reports.index'), 'Reportes', $icon['chart'], $isActive('reports.')) !!}
             @endif
 
+            @if($u && ($u->isAdmin() || $u->hasPermission('tools.presentation_to_video')))
+                <div class="px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-slate-500">Herramientas</div>
+                {!! $navItem(route('presentation_videos.index'), 'Presentación a video', '<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/></svg>', $isActive('presentation_videos.')) !!}
+            @endif
+
             @if($u && $u->isAdmin())
                 <div class="px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-slate-500">Administración</div>
                 {!! $navItem(route('users.index'), 'Usuarios', $icon['users'], $isActive('users.')) !!}

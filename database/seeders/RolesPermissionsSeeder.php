@@ -90,6 +90,8 @@ class RolesPermissionsSeeder extends Seeder
             // Cameras
             ['name' => 'cameras.view', 'label' => 'Ver cámaras', 'group' => 'security'],
             ['name' => 'cameras.manage', 'label' => 'Gestionar cámaras', 'group' => 'security'],
+            // Tools / Herramientas
+            ['name' => 'tools.presentation_to_video', 'label' => 'Presentación a video', 'group' => 'tools'],
         ];
 
         foreach ($permissions as $data) {
@@ -98,7 +100,7 @@ class RolesPermissionsSeeder extends Seeder
 
         $map = [
             'admin' => Permission::pluck('id')->all(),
-            'it' => Permission::whereIn('group', ['assets', 'assignments', 'maintenance', 'tickets', 'reports', 'workflows', 'projects', 'procurement', 'finance', 'directory'])
+            'it' => Permission::whereIn('group', ['assets', 'assignments', 'maintenance', 'tickets', 'reports', 'workflows', 'projects', 'procurement', 'finance', 'directory', 'tools'])
                 ->pluck('id')
                 ->merge(Permission::whereIn('name', ['accesses.view', 'cameras.view', 'cameras.manage'])->pluck('id'))
                 ->unique()->all(),
